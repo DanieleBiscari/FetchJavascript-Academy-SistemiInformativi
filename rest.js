@@ -27,15 +27,14 @@ function dataValidation(nome, cognome, email, password) {
     email.classList.add("is-invalid");
   }
   if (
-    !password.match("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,20}")
+    !password.match(
+      "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,20}"
+    )
   ) {
     const password = document.getElementById("password");
     password.classList.add("is-invalid");
   }
 }
-
-
-
 
 // GET DI TUTTI GLI UTENTI DAL DB //
 async function getUtenti() {
@@ -112,9 +111,6 @@ function setUtentiInTable(dati) {
   tfoot.appendChild(trFooter);
 }
 
-
-
-
 // POST DI UN NUOVO UTENTE NEL DB //
 const formSubmit = document.getElementById("formSubmit");
 formSubmit?.addEventListener("click", async (e) => {
@@ -123,8 +119,8 @@ formSubmit?.addEventListener("click", async (e) => {
 });
 
 async function createNewUser() {
-    await createNewUserFetch();
-    await refreshTable();
+  await createNewUserFetch();
+  await refreshTable();
 }
 async function createNewUserFetch() {
   const form = document.getElementById("createUserForm");
@@ -149,9 +145,6 @@ async function createNewUserFetch() {
     }),
   }).catch((error) => console.error("Errore:", error));
 }
-
-
-
 
 // DELETE DI UN NUOVO UTENTE NEL DB //
 async function deleteUtente(email) {
@@ -179,6 +172,26 @@ loginSubmit?.addEventListener("click", async (e) => {
   e.preventDefault();
   loginUtente();
 });
-async function loginUtente(){
-    
+async function loginUtente() {
+  const form = document.getElementById("loginForm");
+  const formData = new FormData(form);
+  const email = formData.get("email");
+  const password = formData.get("password");
+  // validazione dell'email e la password
+  fetch("http://localhost:8080/api/utente/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: email,
+      password: password,
+    }),
+  })
+  .then(response =>response.json())
+  .then(() => {
+    // todo: controllare se il token è valido e verificare che il ruolo sia admin.
+    window.location.href = "admin.html"
+  })
+  .catch((error) => console.error("Errore:", error));
 }
